@@ -7,3 +7,4 @@ CREATE TABLE admins(
     created_at timestamp default now(),
     created_by varchar(50)
 );
+CREATE INDEX index_admin_id ON admins (id);
