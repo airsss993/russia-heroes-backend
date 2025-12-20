@@ -31,7 +31,7 @@ type JWTConfig struct {
 	RefreshTokenTTL time.Duration
 }
 
-// Init initializes configuration by parsing YAML file and environment variables, returns populated Config or error if parsing fails.
+// Init инициализирует весь конфиг с уже заполненными полями
 func Init() (*Config, error) {
 	var cfg Config
 
@@ -47,7 +47,7 @@ func Init() (*Config, error) {
 	return &cfg, nil
 }
 
-// parseEnvs parses env's from .env file and populates the provided Config struct, returns error if parsing fails.
+// Загрузка env переменных в конфиг
 func parseEnvs(cfg *Config) error {
 	err := godotenv.Load("./.env")
 	if err != nil {
@@ -67,16 +67,14 @@ func parseEnvs(cfg *Config) error {
 	return nil
 }
 
-// parseYml parses YAML config file and populates the provided Config struct, returns error if parsing fails.
+// Парсинг значений с yml конфига в структуру
 func parseYml(cfg *Config) error {
-	// Name of the config file without an extension (Viper will intuit the type
-	// from an extension on the actual file)
+	// Указать имя файла конфига
 	viper.SetConfigName("main")
 
-	// Add search paths to find the file
+	// Добавить путь для поиска конфига
 	viper.AddConfigPath("./configs")
 
-	// Find and read the config file
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic(fmt.Errorf("fatal error config file: %w", err))

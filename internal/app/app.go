@@ -8,12 +8,15 @@ import (
 	"go.uber.org/zap"
 )
 
+// Run инициализирует и запускает весь проект
 func Run() {
+	// Инициализация логгера с выбором уровня логов: dev | prod
 	if err := logger.Init("dev"); err != nil {
 		panic(err)
 	}
 	defer logger.L.Sync()
 
+	// Инициализация всего конфига
 	cfg, err := config.Init()
 	if err != nil {
 		logger.L.Fatal("failed to init config", zap.Error(err))

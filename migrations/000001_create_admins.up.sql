@@ -1,10 +1,13 @@
-CREATE TYPE admin AS ENUM ('super_admin', 'admin');
-CREATE TABLE admins(
-    id uuid,
-    username varchar(50),
-    pass_hash varchar(200),
-    role admin,
-    created_at timestamp default now(),
-    created_by varchar(50)
+CREATE TYPE admin_role AS ENUM ('super_admin', 'admin');
+
+CREATE TABLE admins
+(
+    id            SERIAL PRIMARY KEY,
+    username      VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255)        NOT NULL,
+    role          admin_role          NOT NULL DEFAULT 'admin',
+    created_at    TIMESTAMP                    DEFAULT NOW(),
+    created_by    INTEGER REFERENCES admins (id)
 );
-CREATE INDEX index_admin_id ON admins (id);
+
+CREATE INDEX idx_admins_username ON admins (username);

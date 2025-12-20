@@ -1,2 +1,5 @@
+# Конфигурация http сервера
 server:
-  port: "8080"
+  port: ":8080" # порт указывается с ":"
+  readtimeout: 30s
+  writetimeout: 30s
