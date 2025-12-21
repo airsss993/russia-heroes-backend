@@ -9,22 +9,26 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Config основная конфигурация приложения
 type Config struct {
 	Server   ServerConfig
 	Database DatabaseConfig
 	JWT      JWTConfig
 }
 
+// DatabaseConfig настройки подключения к базе данных
 type DatabaseConfig struct {
 	DatabaseURL string
 }
 
+// ServerConfig настройки HTTP сервера
 type ServerConfig struct {
 	Port         string
 	ReadTimeout  time.Duration
 	WriteTimeout time.Duration
 }
 
+// JWTConfig настройки JWT аутентификации
 type JWTConfig struct {
 	SecretKey       string
 	AccessTokenTTL  time.Duration
@@ -69,10 +73,7 @@ func parseEnvs(cfg *Config) error {
 
 // Парсинг значений с yml конфига в структуру
 func parseYml(cfg *Config) error {
-	// Указать имя файла конфига
 	viper.SetConfigName("main")
-
-	// Добавить путь для поиска конфига
 	viper.AddConfigPath("./configs")
 
 	err := viper.ReadInConfig()

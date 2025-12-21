@@ -60,3 +60,9 @@ type Admin struct {
 	CreatedAt    sql.NullTime  `json:"created_at"`
 	CreatedBy    sql.NullInt32 `json:"created_by"`
 }
+
+type EventType struct {
+	ID    int32  `json:"id"`
+	Name  string `json:"name"`
+	Color string `json:"color"`
+}
