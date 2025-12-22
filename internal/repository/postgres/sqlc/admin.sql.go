@@ -11,13 +11,13 @@ import (
 )
 
 const createAdmin = `-- name: CreateAdmin :one
-INSERT INTO admins (username, password_hash, role, created_by)
+INSERT INTO admins (user_name, password_hash, role, created_by)
 VALUES ($1, $2, $3, $4)
-RETURNING id, username, password_hash, role, created_at, created_by
+RETURNING id, user_name, password_hash, role, created_at, created_by
 `
 
 type CreateAdminParams struct {
-	Username     string        `json:"username"`
+	UserName     string        `json:"user_name"`
 	PasswordHash string        `json:"password_hash"`
 	Role         AdminRole     `json:"role"`
 	CreatedBy    sql.NullInt32 `json:"created_by"`
@@ -25,7 +25,7 @@ type CreateAdminParams struct {
 
 func (q *Queries) CreateAdmin(ctx context.Context, arg CreateAdminParams) (Admin, error) {
 	row := q.db.QueryRowContext(ctx, createAdmin,
-		arg.Username,
+		arg.UserName,
 		arg.PasswordHash,
 		arg.Role,
 		arg.CreatedBy,
@@ -33,7 +33,7 @@ func (q *Queries) CreateAdmin(ctx context.Context, arg CreateAdminParams) (Admin
 	var i Admin
 	err := row.Scan(
 		&i.ID,
-		&i.Username,
+		&i.UserName,
 		&i.PasswordHash,
 		&i.Role,
 		&i.CreatedAt,
@@ -54,7 +54,7 @@ func (q *Queries) DeleteAdmin(ctx context.Context, id int32) error {
 }
 
 const getAdminByID = `-- name: GetAdminByID :one
-SELECT id, username, password_hash, role, created_at, created_by
+SELECT id, user_name, password_hash, role, created_at, created_by
 FROM admins
 WHERE id = $1
 LIMIT 1
@@ -65,7 +65,7 @@ func (q *Queries) GetAdminByID(ctx context.Context, id int32) (Admin, error) {
 	var i Admin
 	err := row.Scan(
 		&i.ID,
-		&i.Username,
+		&i.UserName,
 		&i.PasswordHash,
 		&i.Role,
 		&i.CreatedAt,
@@ -75,18 +75,18 @@ func (q *Queries) GetAdminByID(ctx context.Context, id int32) (Admin, error) {
 }
 
 const getAdminByUsername = `-- name: GetAdminByUsername :one
-SELECT id, username, password_hash, role, created_at, created_by
+SELECT id, user_name, password_hash, role, created_at, created_by
 FROM admins
-WHERE username = $1
+WHERE user_name = $1
 LIMIT 1
 `
 
-func (q *Queries) GetAdminByUsername(ctx context.Context, username string) (Admin, error) {
-	row := q.db.QueryRowContext(ctx, getAdminByUsername, username)
+func (q *Queries) GetAdminByUsername(ctx context.Context, userName string) (Admin, error) {
+	row := q.db.QueryRowContext(ctx, getAdminByUsername, userName)
 	var i Admin
 	err := row.Scan(
 		&i.ID,
-		&i.Username,
+		&i.UserName,
 		&i.PasswordHash,
 		&i.Role,
 		&i.CreatedAt,
@@ -96,9 +96,9 @@ func (q *Queries) GetAdminByUsername(ctx context.Context, username string) (Admi
 }
 
 const listAdmins = `-- name: ListAdmins :many
-SELECT id, username, password_hash, role, created_at, created_by
+SELECT id, user_name, password_hash, role, created_at, created_by
 FROM admins
-ORDER BY username
+ORDER BY user_name
 `
 
 func (q *Queries) ListAdmins(ctx context.Context) ([]Admin, error) {
@@ -112,7 +112,7 @@ func (q *Queries) ListAdmins(ctx context.Context) ([]Admin, error) {
 		var i Admin
 		if err := rows.Scan(
 			&i.ID,
-			&i.Username,
+			&i.UserName,
 			&i.PasswordHash,
 			&i.Role,
 			&i.CreatedAt,
@@ -133,7 +133,7 @@ func (q *Queries) ListAdmins(ctx context.Context) ([]Admin, error) {
 
 const updateAdmin = `-- name: UpdateAdmin :exec
 UPDATE admins
-SET username = $2,
+SET user_name = $2,
     password_hash = $3,
     role = $4
 WHERE id = $1
@@ -141,7 +141,7 @@ WHERE id = $1
 
 type UpdateAdminParams struct {
 	ID           int32     `json:"id"`
-	Username     string    `json:"username"`
+	UserName     string    `json:"user_name"`
 	PasswordHash string    `json:"password_hash"`
 	Role         AdminRole `json:"role"`
 }
@@ -149,7 +149,7 @@ type UpdateAdminParams struct {
 func (q *Queries) UpdateAdmin(ctx context.Context, arg UpdateAdminParams) error {
 	_, err := q.db.ExecContext(ctx, updateAdmin,
 		arg.ID,
-		arg.Username,
+		arg.UserName,
 		arg.PasswordHash,
 		arg.Role,
 	)

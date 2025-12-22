@@ -25,6 +25,7 @@ ENV TZ Asia/Shanghai
 
 WORKDIR /app
 COPY --from=builder /app/main /app/main
-
+COPY --from=builder /build/configs /app/configs
+COPY --from=builder /build/.env /app/.env
 
 CMD ["./main"]

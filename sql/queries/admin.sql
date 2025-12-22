@@ -7,22 +7,22 @@ LIMIT 1;
 -- name: GetAdminByUsername :one
 SELECT *
 FROM admins
-WHERE username = $1
+WHERE user_name = $1
 LIMIT 1;
 
 -- name: ListAdmins :many
 SELECT *
 FROM admins
-ORDER BY username;
+ORDER BY user_name;
 
 -- name: CreateAdmin :one
-INSERT INTO admins (username, password_hash, role, created_by)
+INSERT INTO admins (user_name, password_hash, role, created_by)
 VALUES ($1, $2, $3, $4)
 RETURNING *;
 
 -- name: UpdateAdmin :exec
 UPDATE admins
-SET username = $2,
+SET user_name = $2,
     password_hash = $3,
     role = $4
 WHERE id = $1;

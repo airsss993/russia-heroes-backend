@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
+	"time"
 )
 
 type AdminRole string
@@ -52,9 +53,52 @@ func (ns NullAdminRole) Value() (driver.Value, error) {
 	return string(ns.AdminRole), nil
 }
 
+type RequestStatus string
+
+const (
+	RequestStatusPending  RequestStatus = "pending"
+	RequestStatusApproved RequestStatus = "approved"
+	RequestStatusRejected RequestStatus = "rejected"
+)
+
+func (e *RequestStatus) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = RequestStatus(s)
+	case string:
+		*e = RequestStatus(s)
+	default:
+		return fmt.Errorf("unsupported scan type for RequestStatus: %T", src)
+	}
+	return nil
+}
+
+type NullRequestStatus struct {
+	RequestStatus RequestStatus `json:"request_status"`
+	Valid         bool          `json:"valid"` // Valid is true if RequestStatus is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullRequestStatus) Scan(value interface{}) error {
+	if value == nil {
+		ns.RequestStatus, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.RequestStatus.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullRequestStatus) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.RequestStatus), nil
+}
+
 type Admin struct {
 	ID           int32         `json:"id"`
-	Username     string        `json:"username"`
+	UserName     string        `json:"user_name"`
 	PasswordHash string        `json:"password_hash"`
 	Role         AdminRole     `json:"role"`
 	CreatedAt    sql.NullTime  `json:"created_at"`
@@ -65,4 +109,23 @@ type EventType struct {
 	ID    int32  `json:"id"`
 	Name  string `json:"name"`
 	Color string `json:"color"`
+}
+
+type SiteRequest struct {
+	ID              int32          `json:"id"`
+	UserEmail       string         `json:"user_email"`
+	UserName        string         `json:"user_name"`
+	SiteTitle       string         `json:"site_title"`
+	SiteDescription sql.NullString `json:"site_description"`
+	Location        interface{}    `json:"location"`
+	EventDate       time.Time      `json:"event_date"`
+	EventTypeID     int32          `json:"event_type_id"`
+	ArchivePath     sql.NullString `json:"archive_path"`
+	ExtractedPath   sql.NullString `json:"extracted_path"`
+	PreviewImageUrl sql.NullString `json:"preview_image_url"`
+	Status          RequestStatus  `json:"status"`
+	RejectionReason sql.NullString `json:"rejection_reason"`
+	SubmittedAt     sql.NullTime   `json:"submitted_at"`
+	ReviewedAt      sql.NullTime   `json:"reviewed_at"`
+	ReviewedBy      sql.NullInt32  `json:"reviewed_by"`
 }

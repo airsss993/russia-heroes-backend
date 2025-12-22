@@ -8,13 +8,15 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:5432/${POSTGRES_DB}?sslmode=disable
+      - DB_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable
     depends_on:
       db:
         condition: service_healthy
 
   migrate:
     image: migrate/migrate
+    platform: linux/amd64
+    restart: on-failure
     depends_on:
       db:
         condition: service_healthy
@@ -23,9 +25,10 @@ services:
     command: [ "-path", "/migrations", "-database", "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable", "up" ]
 
   db:
-    image: postgres:18-alpine
+    image: postgis/postgis:18-3.6
+    platform: linux/amd64
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql
     env_file:
       - .env
     environment:
