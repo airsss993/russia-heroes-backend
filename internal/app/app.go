@@ -16,10 +16,10 @@ func Run() {
 
 	_, err := config.Init()
 	if err != nil {
-		logger.L.Fatal("ошибка инициализации конфига", zap.Error(err))
+		logger.L.Fatal("failed to init config", zap.Error(err))
 	}
 
-	logger.L.Info("запуск russia-heroes backend",
+	logger.L.Info("starting russia-heroes backend",
 		zap.String("version", "0.1.0"),
 	)
 

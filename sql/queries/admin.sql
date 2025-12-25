@@ -1,3 +1,5 @@
+-- TODO: убрать возвращение полных данных из БД, возвращать только id при создании админа
+
 -- name: GetAdminByID :one
 SELECT *
 FROM admins
@@ -20,12 +22,10 @@ INSERT INTO admins (user_name, password_hash, role, created_by)
 VALUES ($1, $2, $3, $4)
 RETURNING *;
 
--- name: UpdateAdmin :exec
-UPDATE admins
-SET user_name = $2,
-    password_hash = $3,
-    role = $4
-WHERE id = $1;
+-- name: CreateSuperAdmin :one
+INSERT INTO admins (user_name, password_hash, role, created_by)
+VALUES ($1, $2, 'super-admin', $3)
+RETURNING *;
 
 -- name: DeleteAdmin :exec
 DELETE

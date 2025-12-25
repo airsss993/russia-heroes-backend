@@ -42,6 +42,32 @@ func (q *Queries) CreateAdmin(ctx context.Context, arg CreateAdminParams) (Admin
 	return i, err
 }
 
+const createSuperAdmin = `-- name: CreateSuperAdmin :one
+INSERT INTO admins (user_name, password_hash, role, created_by)
+VALUES ($1, $2, 'super-admin', $3)
+RETURNING id, user_name, password_hash, role, created_at, created_by
+`
+
+type CreateSuperAdminParams struct {
+	UserName     string        `json:"user_name"`
+	PasswordHash string        `json:"password_hash"`
+	CreatedBy    sql.NullInt32 `json:"created_by"`
+}
+
+func (q *Queries) CreateSuperAdmin(ctx context.Context, arg CreateSuperAdminParams) (Admin, error) {
+	row := q.db.QueryRowContext(ctx, createSuperAdmin, arg.UserName, arg.PasswordHash, arg.CreatedBy)
+	var i Admin
+	err := row.Scan(
+		&i.ID,
+		&i.UserName,
+		&i.PasswordHash,
+		&i.Role,
+		&i.CreatedAt,
+		&i.CreatedBy,
+	)
+	return i, err
+}
+
 const deleteAdmin = `-- name: DeleteAdmin :exec
 DELETE
 FROM admins
@@ -129,29 +155,4 @@ func (q *Queries) ListAdmins(ctx context.Context) ([]Admin, error) {
 		return nil, err
 	}
 	return items, nil
-}
-
-const updateAdmin = `-- name: UpdateAdmin :exec
-UPDATE admins
-SET user_name = $2,
-    password_hash = $3,
-    role = $4
-WHERE id = $1
-`
-
-type UpdateAdminParams struct {
-	ID           int32     `json:"id"`
-	UserName     string    `json:"user_name"`
-	PasswordHash string    `json:"password_hash"`
-	Role         AdminRole `json:"role"`
-}
-
-func (q *Queries) UpdateAdmin(ctx context.Context, arg UpdateAdminParams) error {
-	_, err := q.db.ExecContext(ctx, updateAdmin,
-		arg.ID,
-		arg.UserName,
-		arg.PasswordHash,
-		arg.Role,
-	)
-	return err
 }
