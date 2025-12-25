@@ -1,10 +1,9 @@
 package app
 
 import (
-	"fmt"
-
 	"github.com/airsss993/russia-heroes-backend/internal/config"
 	"github.com/airsss993/russia-heroes-backend/pkg/logger"
+	"github.com/airsss993/russia-heroes-backend/pkg/utils"
 	"go.uber.org/zap"
 )
 
@@ -15,14 +14,15 @@ func Run() {
 	}
 	defer logger.L.Sync()
 
-	cfg, err := config.Init()
+	_, err := config.Init()
 	if err != nil {
-		logger.L.Fatal("failed to init config", zap.Error(err))
+		logger.L.Fatal("ошибка инициализации конфига", zap.Error(err))
 	}
-	fmt.Println(cfg.Database.DatabaseURL)
-	fmt.Println(cfg.Server.Port)
 
-	logger.L.Info("starting russia-heroes backend",
+	logger.L.Info("запуск russia-heroes backend",
 		zap.String("version", "0.1.0"),
 	)
+
+	creds := utils.GenerateAdminCredentials()
+	utils.PrintCredentials(creds)
 }
