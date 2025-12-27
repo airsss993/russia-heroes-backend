@@ -80,12 +80,14 @@ func (q *Queries) DeleteAdmin(ctx context.Context, id int32) error {
 }
 
 const getAdminByID = `-- name: GetAdminByID :one
+
 SELECT id, user_name, password_hash, role, created_at, created_by
 FROM admins
 WHERE id = $1
 LIMIT 1
 `
 
+// TODO: убрать возвращение полных данных из БД, возвращать только id при создании админа
 func (q *Queries) GetAdminByID(ctx context.Context, id int32) (Admin, error) {
 	row := q.db.QueryRowContext(ctx, getAdminByID, id)
 	var i Admin

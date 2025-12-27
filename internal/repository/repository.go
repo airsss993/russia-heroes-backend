@@ -6,7 +6,7 @@ import (
 	"github.com/airsss993/russia-heroes-backend/internal/repository/postgres/sqlc"
 )
 
-// AdminRepo отвечает за работу с администраторами в базе данных
+// AdminRepo отвечает за работу с администраторами в БД
 type AdminRepo interface {
 	CreateAdmin(ctx context.Context, arg sqlc.CreateAdminParams) (sqlc.Admin, error)
 	CreateSuperAdmin(ctx context.Context, arg sqlc.CreateSuperAdminParams) (sqlc.Admin, error)

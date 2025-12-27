@@ -1,7 +1,7 @@
 -- Создание типа ENUM для ролей администраторов
 -- super_admin - полные права доступа ко всем функциям системы
 -- admin - стандартные права администратора
-CREATE TYPE admin_role AS ENUM ('super_admin', 'admin');
+CREATE TYPE admin_role AS ENUM ('super-admin', 'admin');
 
 -- Таблица для хранения учетных записей администраторов системы
 CREATE TABLE admins

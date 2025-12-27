@@ -2,6 +2,7 @@ name: russian-heroes-backend
 
 services:
   app:
+    restart: on-failure
     build: .
     ports:
       - "8080:8080"
@@ -25,6 +26,7 @@ services:
     command: [ "-path", "/migrations", "-database", "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable", "up" ]
 
   db:
+    restart: on-failure
     image: postgis/postgis:18-3.6
     platform: linux/amd64
     volumes:

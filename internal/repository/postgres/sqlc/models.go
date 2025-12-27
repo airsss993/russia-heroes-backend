@@ -14,7 +14,7 @@ import (
 type AdminRole string
 
 const (
-	AdminRoleSuperAdmin AdminRole = "super_admin"
+	AdminRoleSuperAdmin AdminRole = "super-admin"
 	AdminRoleAdmin      AdminRole = "admin"
 )
 
