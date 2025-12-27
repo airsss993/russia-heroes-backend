@@ -4,8 +4,8 @@ type Services struct {
 	AdminService AdminService
 }
 
-func NewServices(adminService AdminService) *Services {
+func NewServices(adminService *AdminService) *Services {
 	return &Services{
-		AdminService: AdminService{},
+		AdminService: *adminService,
 	}
 }
