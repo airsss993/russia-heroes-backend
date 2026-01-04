@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	lenghtUsername = 12                                                               // Определяет длину генерируемого имени пользователя
+	lenghtUsername = 8                                                                // Определяет длину генерируемого имени пользователя
 	lenghtPassword = 16                                                               // Определяет длину генерируемого пароля
 	symbols        = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" // Содержит набор символов, используемых для генерации учетных данных
 )
@@ -21,7 +21,7 @@ type Credentials struct {
 // GenerateRandString - генерирует криптографически случайные строки
 //
 // Принимает:
-// - int - кол-во символом для выходной строки
+// - cost - кол-во символов для выходной строки
 //
 // Возвращает:
 // - string - сгенерированную строку или
@@ -39,11 +39,33 @@ func GenerateRandString(cost int) []byte {
 	return b
 }
 
+// GenerateUsername генерирует уникальное имя админа в формате "admin_{8 случайных символов}"
+//
+// Возвращает:
+// - []byte - срез байт типа "admin_a7b3c9d2"
+func GenerateUsername() []byte {
+	prefix := []byte("admin_")
+	b := make([]byte, len(prefix)+lenghtUsername)
+	copy(b, prefix)
+
+	for i := len(prefix); i < len(b); i++ {
+		n, err := rand.Int(rand.Reader, big.NewInt(int64(len(symbols))))
+		if err != nil {
+			return nil
+		}
+		b[i] = symbols[n.Int64()]
+	}
+
+	return b
+}
+
 // GenerateAdminCredentials - генерирует новый набор учетных данных администратора с криптографически стойкими случайными именем пользователя и паролем
 //
-// Всегда возвращает nil в качестве ошибки для обратной совместимости
+// Возвращает:
+// - Credentials - структуру с заполненными данными для логина
 func GenerateAdminCredentials() Credentials {
-	username := GenerateRandString(lenghtUsername)
+	// Создаем случайные имя и пароль пользователя
+	username := GenerateUsername()
 	password := GenerateRandString(lenghtPassword)
 	return Credentials{
 		Username: string(username),
