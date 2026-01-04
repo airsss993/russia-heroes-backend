@@ -18,46 +18,36 @@ type Credentials struct {
 	Password string // Сгенерированный пароль
 }
 
-// Генерирует криптографически стойкий случайный пароль
+// GenerateRandString - генерирует криптографически случайные строки
 //
-// Возвращает пустую строку в случае ошибки генерации случайного числа
-func generatePassword() string {
-	b := make([]byte, lenghtPassword)
+// Принимает:
+// - int - кол-во символом для выходной строки
+//
+// Возвращает:
+// - string - сгенерированную строку или
+// пустую строку в случае ошибки генерации случайного числа.
+func GenerateRandString(cost int) []byte {
+	b := make([]byte, cost)
 	for i := range b {
 		n, err := rand.Int(rand.Reader, big.NewInt(int64(len(symbols))))
 		if err != nil {
-			return ""
+			return []byte{}
 		}
 		b[i] = symbols[n.Int64()]
 	}
 
-	return string(b)
+	return b
 }
 
-// Генерирует криптографически стойкое случайное имя пользователя
-//
-// Возвращает пустую строку в случае ошибки генерации случайного числа
-func generateUsername() string {
-	b := make([]byte, lenghtUsername)
-	for i := range b {
-		n, err := rand.Int(rand.Reader, big.NewInt(int64(len(symbols))))
-		if err != nil {
-			return ""
-		}
-		b[i] = symbols[n.Int64()]
-	}
-	return string(b)
-}
-
-// GenerateAdminCredentials Генерирует новый набор учетных данных администратора с криптографически стойкими случайными именем пользователя и паролем
+// GenerateAdminCredentials - генерирует новый набор учетных данных администратора с криптографически стойкими случайными именем пользователя и паролем
 //
 // Всегда возвращает nil в качестве ошибки для обратной совместимости
 func GenerateAdminCredentials() Credentials {
-	username := generateUsername()
-	password := generatePassword()
+	username := GenerateRandString(lenghtUsername)
+	password := GenerateRandString(lenghtPassword)
 	return Credentials{
-		Username: username,
-		Password: password,
+		Username: string(username),
+		Password: string(password),
 	}
 }
 
