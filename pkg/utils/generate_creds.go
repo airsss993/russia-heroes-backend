@@ -75,6 +75,9 @@ func GenerateAdminCredentials() Credentials {
 
 // PrintCredentials выводит учетные данные администратора в консоль
 //
+// Принимает:
+// - creds - структуру с данными админа
+//
 // Отображает сгенерированные username и password с предупреждением о необходимости их сохранения
 func PrintCredentials(creds Credentials) {
 	fmt.Println("\n=== Учетные данные администратора ===")

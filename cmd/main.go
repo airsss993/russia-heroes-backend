@@ -1,9 +1,13 @@
 package main
 
 import (
-	"github.com/airsss993/russia-heroes-backend/internal/app"
+	"fmt"
+
+	"github.com/airsss993/russia-heroes-backend/pkg/utils"
 )
 
 func main() {
-	app.Run()
+	secret, _ := utils.GenerateSecretKey()
+	id, _ := utils.GenerateAccessKeyID()
+	fmt.Println(secret, id)
 }
