@@ -33,3 +33,4 @@ go.work.sum
 .idea/
 # .vscode/
 tmp/main
+tmp/build-errors.log
